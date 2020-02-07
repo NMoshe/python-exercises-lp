@@ -1,0 +1,1 @@
+Various exercises while reading through Learning Python(Mark Lutz, 2013)
