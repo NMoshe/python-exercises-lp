@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # python 3.8
 import random
+import string
 
 
 def openFile(file):
@@ -21,18 +22,29 @@ def createPassPhrase(words):
 
 def complexPassPhrase(words):
     passphrase = ""
-    choice = random.randint(0, 1)
+    substitutions = {"a": "4", "e": "3", "i": "!", "o": "0", "l": "1"}
+    numeral = str(random.randint(1, 100))
+    punctater = random.choice(string.punctuation)
 
     try:
         passphrase += random.choice(words)
     except Exception as e:
         print("Incorrect Source.")
 
+    if random.randint(0, 1) == 1:
+        passphrase.capitalize()
+
     for x in passphrase:
-        if choice == 1:
-            passphrase = passphrase.capitalize()
+        if x.lower() in substitutions:
+            if random.randint(0, 1) == 1:
+                passphrase = passphrase.replace(x, substitutions[x])
+
+    if random.randint(0, 1) == 1:
+        passphrase += punctater + numeral
+    else:
+        passphrase += numeral + punctater
 
     return print(passphrase)
 
-
+createPassPhrase(openFile("english.txt"))
 complexPassPhrase(openFile("english.txt"))
