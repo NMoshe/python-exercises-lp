@@ -3,6 +3,7 @@
 import random
 import string
 import time
+import collections
 
 
 def openFile(file):
@@ -45,7 +46,7 @@ def complexPassPhrase(words):
     else:
         passphrase += numeral + punctater
 
-    return print(passphrase)
+    return passphrase
 
 
 def dicewareDiceroll():
@@ -54,7 +55,7 @@ def dicewareDiceroll():
     for x in range(5):
         roll = random.randint(1, 6)
         numberStr += str(roll)
-        time.sleep(random.randint(1, 3))
+        time.sleep(1)
         if x == 0:
             print(f"First roll...{roll}!")
         elif x == 1:
@@ -80,11 +81,78 @@ def dicewarePassPhrase(diceware):
 
     for x in range(6):
         code = dicewareDiceroll()
-        print(f"Your code {code} returned the word {dicewareDict[str(code)]}")
+        print(f"Your code: {code} returned the word: {dicewareDict[str(code)]}")
         dicewarePass += dicewareDict[str(code)] + " "
 
     return print(dicewarePass)
 
-createPassPhrase(openFile("english.txt"))
+
+def alphamericPassPhrase():
+    alphameric = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    alphamericList = []
+    for x in alphameric:
+        alphamericList.append(x)
+    return "".join(random.sample(alphamericList, 9))
+
+
+def passwordStrength(password):
+    # Test password strength. Formula used in function from http://www.passwordmeter.com/
+    strength = 0
+    uppercaseCount, lowercaseCount, numberCount, symbolCount, repeatingChars = 0, 0, 0, 0, 0
+    consecutiveUppLet, consecutiveLowLet, consecutiveNum = 0, 0, 0
+    passwordLength = len(password)
+    charCount = collections.Counter(password.lower())
+    strength += passwordLength * 4
+
+    # increments
+    for c in password:
+        if c.isupper():
+            uppercaseCount += 1
+        elif c.islower():
+            lowercaseCount += 1
+        elif c.isdigit():
+            numberCount += 1
+        elif c in string.punctuation:
+            symbolCount += 1
+
+    if uppercaseCount:
+        strength += (passwordLength - uppercaseCount) * 2
+    if lowercaseCount:
+        strength += (passwordLength - lowercaseCount) * 2
+    if numberCount:
+        strength += (passwordLength - numberCount) * 4
+    if symbolCount:
+        strength += (passwordLength - symbolCount) * 6
+
+    # deductions
+    if uppercaseCount + lowercaseCount == passwordLength or numberCount == passwordLength:
+        strength -= passwordLength
+
+    for _, v in charCount.items():
+        repeatingChars += v
+
+    if repeatingChars:
+        strength -= (repeatingChars - len(collections.Counter(password).values())) * 2
+
+    for current, nextt in zip(password, password[1:]):
+        if current.isupper() and nextt.isupper():
+            consecutiveUppLet += 1
+        if current.islower() and nextt.islower():
+            consecutiveLowLet += 1
+        if current.isdigit() and nextt.isdigit():
+            consecutiveNum += 1
+
+    if consecutiveUppLet:
+        strength -= consecutiveUppLet * 2
+
+    if consecutiveLowLet:
+        strength -= consecutiveLowLet * 2
+
+    return strength
+
+
+"""createPassPhrase(openFile("english.txt"))
 complexPassPhrase(openFile("english.txt"))
-dicewarePassPhrase("diceware.txt")
+dicewarePassPhrase("diceware.txt")"""
+s = alphamericPassPhrase()
+passwordStrength("gew34tswte3q")
