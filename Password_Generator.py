@@ -4,6 +4,7 @@ import random
 import string
 import time
 import collections
+import sys
 
 
 def openFile(file):
@@ -19,7 +20,7 @@ def createPassPhrase(words):
             passphrase += random.choice(words) + " "
     except Exception as e:
         print("Incorrect Source.")
-    return print(passphrase)
+    return passphrase
 
 
 def complexPassPhrase(words):
@@ -84,7 +85,7 @@ def dicewarePassPhrase(diceware):
         print(f"Your code: {code} returned the word: {dicewareDict[str(code)]}")
         dicewarePass += dicewareDict[str(code)] + " "
 
-    return print(dicewarePass)
+    return dicewarePass
 
 
 def alphamericPassPhrase():
@@ -120,9 +121,9 @@ def passwordStrength(password):
     if lowercaseCount:
         strength += (passwordLength - lowercaseCount) * 2
     if numberCount:
-        strength += (passwordLength - numberCount) * 4
+        strength += (passwordLength - numberCount) * 1.2
     if symbolCount:
-        strength += (passwordLength - symbolCount) * 6
+        strength += (passwordLength - symbolCount) * 1.4
 
     # deductions
     if uppercaseCount + lowercaseCount == passwordLength or numberCount == passwordLength:
@@ -148,11 +149,94 @@ def passwordStrength(password):
     if consecutiveLowLet:
         strength -= consecutiveLowLet * 2
 
-    return strength
+    if strength > 100:
+        strength = 100
+
+    return strength / 100
 
 
-"""createPassPhrase(openFile("english.txt"))
-complexPassPhrase(openFile("english.txt"))
-dicewarePassPhrase("diceware.txt")"""
-s = alphamericPassPhrase()
-passwordStrength("gew34tswte3q")
+def password_Strength_Verbose(password):
+    password = password * 100
+    password = round(password)
+    if 0 <= password <= 49:
+        return "Weak"
+    elif 50 <= password <= 59:
+        return "Good"
+    elif 60 <= password <= 79:
+        return "Strong"
+    elif 80 <= password <= 100:
+        return "Secure"
+    else:
+        return "Invalid Source"
+
+
+def main():
+    userpass1, userpass2, userpass3, userpass4 = "", "", "", ""
+    print("Create Verbose password? Y/N")
+    userinput1 = input()
+    if userinput1.lower() not in ["y", "n", "yes", "no"]:
+        print("Incorrect input. Password not created.")
+    elif userinput1.lower() in ["n", "no"]:
+        print("Password not created.")
+    else:
+        userpass1 = createPassPhrase(openFile("english.txt"))
+
+    print("Create Complex password? Y/N")
+    userinput2 = input()
+    if userinput2.lower() not in ["y", "n", "yes", "no"]:
+        print("Incorrect input. Password not created.")
+    elif userinput2.lower() in ["n", "no"]:
+        print("Password not created.")
+    else:
+        userpass2 = complexPassPhrase(openFile("english.txt"))
+
+    print("Create Diceware password? Y/N")
+    userinput3 = input()
+    if userinput3.lower() not in ["y", "n", "yes", "no"]:
+        print("Incorrect input. Password not created.")
+    elif userinput3.lower() in ["n", "no"]:
+        print("Password not created.")
+    else:
+        userpass3 = dicewarePassPhrase("diceware.txt")
+
+    print("Create Alphanumeric password? Y/N")
+    userinput4 = input()
+    if userinput4.lower() not in ["y", "n", "yes", "no"]:
+        print("Incorrect input. Password not created.")
+    elif userinput4.lower() in ["n", "no"]:
+        print("Password not created.")
+    else:
+        userpass4 = alphamericPassPhrase()
+
+    if userpass1:
+        print(f"Verbose Password: {userpass1}")
+        print(f"Strength(Numerical Representation): {passwordStrength(userpass1):.0%}")
+        print(f"Strength(Verbose): {password_Strength_Verbose(passwordStrength(userpass1))}")
+        print("\n")
+    if userpass2:
+        print(f"Complex Password: {userpass2}")
+        print(f"Strength(Numerical Representation): {passwordStrength(userpass2):.0%}")
+        print(f"Strength(Verbose): {password_Strength_Verbose(passwordStrength(userpass2))}")
+        print("\n")
+    if userpass3:
+        print(f"Diceware Password: {userpass3}")
+        print(f"Strength(Numerical Representation): {passwordStrength(userpass3):.0%}")
+        print(f"Strength(Verbose): {password_Strength_Verbose(passwordStrength(userpass3))}")
+        print("\n")
+    if userpass4:
+        print(f"Alphanumeric Password: {userpass4}")
+        print(f"Strength(Numerical Representation): {passwordStrength(userpass4):.0%}")
+        print(f"Strength(Verbose): {password_Strength_Verbose(passwordStrength(userpass4))}")
+        print("\n")
+
+    print("Exit Program? Y/N")
+    userinput5 = input()
+    if userinput5.lower() in ["y", "yes"]:
+        sys.exit()
+    else:
+        time.sleep(60)
+        main()
+
+
+if __name__ == "__main__":
+    main()
